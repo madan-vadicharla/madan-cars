@@ -14,12 +14,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 public class CarsAPITests {
@@ -30,9 +30,12 @@ public class CarsAPITests {
     @MockBean
     private CarService carService;
 
+    @MockBean
+    private DatamuseConsumerService datamuseConsumerService;
+
     private JacksonTester<Car> jsonHelper;
 
-    private Car car = newCar(1L, "1", "Ferrari", 1990);
+    private Car car = newCar(1L, "Ferrari", "LaFerrari", "red", 2018);
     private List<Car> cars = Arrays.asList( car );
 
     @BeforeEach
@@ -47,17 +50,27 @@ public class CarsAPITests {
 
         this.mockMvc.perform( get("/carsapi/v1/cars") )
                 .andExpect( status().isOk() )
-                .andExpect( content().json("[{'id': 1,'make': '1','model': 'Ferrari','year': 1990}]") );
+                .andExpect(jsonPath("$.[0].id", is(1)))
+                .andExpect(jsonPath("$.[0].make", is("Ferrari")))
+                .andExpect(jsonPath("$.[0].model", is("LaFerrari")))
+                .andExpect(jsonPath("$.[0].colour", is("red")))
+                .andExpect(jsonPath("$.[0].year", is(2018)));
     }
 
     @Test
     public void testRetrieve() throws Exception {
 
         given( carService.findById(any(Long.class)) ).willReturn(Optional.of(car));
+        given( datamuseConsumerService.relatedWords(any(String.class)) ).willReturn("some,text,from,datamuse");
 
         this.mockMvc.perform( get("/carsapi/v1/cars/1") )
                 .andExpect( status().isOk() )
-                .andExpect( content().json("{'id': 1,'make': '1','model': 'Ferrari','year': 1990}") );
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.make", is("Ferrari")))
+                .andExpect(jsonPath("$.model", is("LaFerrari")))
+                .andExpect(jsonPath("$.colour", is("red")))
+                .andExpect(jsonPath("$.year", is(2018)))
+                .andExpect(jsonPath("$.datamuse", is("some,text,from,datamuse")));
     }
 
     @Test
@@ -78,7 +91,11 @@ public class CarsAPITests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content( jsonHelper.write(car).getJson() ) )
                 .andExpect( status().isCreated() )
-                .andExpect( content().json("{'id': 1,'make': '1','model': 'Ferrari','year': 1990}") );
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.make", is("Ferrari")))
+                .andExpect(jsonPath("$.model", is("LaFerrari")))
+                .andExpect(jsonPath("$.colour", is("red")))
+                .andExpect(jsonPath("$.year", is(2018)));
     }
 
     @Test
@@ -98,7 +115,11 @@ public class CarsAPITests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content( jsonHelper.write(updatedCar).getJson() ) )
                 .andExpect( status().isOk() )
-                .andExpect( content().json("{'id': 1,'make': '1','model': 'newmodel','year': 1990}") );
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.make", is("Ferrari")))
+                .andExpect(jsonPath("$.model", is("newmodel")))
+                .andExpect(jsonPath("$.colour", is("red")))
+                .andExpect(jsonPath("$.year", is(2018)));
     }
 
     @Test
@@ -119,11 +140,12 @@ public class CarsAPITests {
                 .andExpect( status().isAccepted() );
     }
 
-    private Car newCar(long id, String make, String model, int year) {
+    private Car newCar(long id, String make, String model, String colour, int year) {
         Car car = new Car();
         car.setId(id);
         car.setMake(make);
         car.setModel(model);
+        car.setColour(colour);
         car.setYear(year);
         return car;
     }

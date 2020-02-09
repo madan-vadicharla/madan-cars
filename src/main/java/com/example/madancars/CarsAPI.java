@@ -17,6 +17,8 @@ public class CarsAPI {
 
     private final CarService carService;
 
+    private final DatamuseConsumerService datamuseConsumerService;
+
     @GetMapping("/cars")
     ResponseEntity<List<Car>> all() {
         return ResponseEntity.ok().body( carService.findAll() );
@@ -26,6 +28,10 @@ public class CarsAPI {
     ResponseEntity<Car> retrieve(@PathVariable Long id) {
         Car car = carService.findById(id)
                 .orElseThrow(() -> new CarNotFoundException(id));
+
+        String moreData = datamuseConsumerService.relatedWords(car.getModel());
+        car.setDatamuse(moreData);
+
         return ResponseEntity.ok().body(car);
     }
 

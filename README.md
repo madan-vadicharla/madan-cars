@@ -1,18 +1,19 @@
 # Instructions to run the application
+Please run following from [this project directory](./).
 
 To run tests:
 ```console
-$ mvn clean test
+$ ./mvnw clean test
 ```
 
 To build/package the application into local target folder:
 ```console
-$ mvn clean package
+$ ./mvnw clean package
 ```
 
 Run the application as follows:
 ```console
-$ mvn spring-boot:run
+$ ./mvnw spring-boot:run
 ```
 
 Open following url in your browser and try out various api calls!

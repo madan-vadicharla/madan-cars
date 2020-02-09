@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Data
 @Entity
@@ -17,6 +18,7 @@ public class Car {
     private String model;
     private String colour;
     private Integer year;
+    private @Transient String datamuse;
 
     public Car() {}
 
