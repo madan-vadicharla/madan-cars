@@ -82,6 +82,35 @@ public class CarsAPITests {
     }
 
     @Test
+    public void testUpdate() throws Exception {
+        given( carService.findById(any(Long.class)) ).willReturn(Optional.of(car));
+
+        Car updatedCar = new Car();
+        updatedCar.setId(car.getId());
+        updatedCar.setMake(car.getMake());
+        updatedCar.setModel("newmodel");
+        updatedCar.setColour(car.getColour());
+        updatedCar.setYear(car.getYear());
+
+        given( carService.save( any(Car.class) ) ).willReturn(car);
+
+        this.mockMvc.perform( put("/carsapi/v1/cars/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content( jsonHelper.write(updatedCar).getJson() ) )
+                .andExpect( status().isOk() )
+                .andExpect( content().json("{'id': 1,'make': '1','model': 'newmodel','year': 1990}") );
+    }
+
+    @Test
+    public void testUpdateUnknown() throws Exception {
+
+        given( carService.findById(any(Long.class)) ).willThrow(CarNotFoundException.class);
+
+        this.mockMvc.perform( put("/carsapi/v1/cars/2") )
+                .andExpect( status().isBadRequest() );
+    }
+
+    @Test
     public void testRemove() throws Exception {
 
         doNothing().when(carService).deleteById( any(Long.class) );

@@ -30,4 +30,9 @@ curl -X GET "http://localhost:8080/carsapi/v1/cars/1" -H "accept: */*"
 curl -X DELETE "http://localhost:8080/carsapi/v1/cars/1" -H "accept: */*"
 ```
 
+Other application links of interest:
+
+* [http://localhost:8080/carsapi/h2](http://localhost:8080/carsapi/h2)
+* [http://localhost:8080/carsapi/v1/api-docs](http://localhost:8080/carsapi/h2)
+
 Thank you :)

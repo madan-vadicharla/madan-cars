@@ -23,7 +23,7 @@ public class CarsAPI {
     }
 
     @GetMapping("/cars/{id}")
-    ResponseEntity<Car> retrieve(@PathVariable Long id) throws CarNotFoundException {
+    ResponseEntity<Car> retrieve(@PathVariable Long id) {
         Car car = carService.findById(id)
                 .orElseThrow(() -> new CarNotFoundException(id));
         return ResponseEntity.ok().body(car);
@@ -32,6 +32,20 @@ public class CarsAPI {
     @PostMapping("/cars")
     public ResponseEntity<Car> add(@RequestBody Car car) {
         return ResponseEntity.status(HttpStatus.CREATED).body(carService.save(car));
+    }
+
+    @PutMapping("/cars/{id}")
+    public ResponseEntity<Car> update(@PathVariable Long id, @RequestBody Car car) {
+        Car carToUpdate = carService.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(id));
+
+        carToUpdate.setMake(car.getMake());
+        carToUpdate.setModel(car.getModel());
+        carToUpdate.setColour(car.getColour());
+        carToUpdate.setYear(car.getYear());
+
+        Car updatedCar = carService.save(carToUpdate);
+        return ResponseEntity.ok(updatedCar);
     }
 
     @DeleteMapping("/cars/{id}")
