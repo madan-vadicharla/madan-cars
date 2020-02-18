@@ -18,7 +18,7 @@ public class Car {
     private String model;
     private String colour;
     private Integer year;
-    private @Transient String datamuse;
+    private @ApiModelProperty(hidden = true) @Transient String datamuse;
 
     public Car() {}
 

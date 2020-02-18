@@ -7,6 +7,8 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.UiConfiguration;
+import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
@@ -19,6 +21,20 @@ public class Application {
 				.select()
 				.apis(RequestHandlerSelectors.any())
 				.paths(PathSelectors.any())
+				.build();
+	}
+
+	@Bean
+	public UiConfiguration swaggerUiConfig() {
+		return UiConfigurationBuilder.builder()
+				.deepLinking(true)
+				.displayOperationId(false)
+				.defaultModelsExpandDepth(-1)
+				.defaultModelExpandDepth(1)
+				.displayRequestDuration(false)
+				.filter(false)
+				.showExtensions(false)
+				.supportedSubmitMethods(UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS)
 				.build();
 	}
 

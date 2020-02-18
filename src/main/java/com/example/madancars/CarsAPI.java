@@ -20,12 +20,14 @@ public class CarsAPI {
     private final DatamuseConsumerService datamuseConsumerService;
 
     @GetMapping("/cars")
-    ResponseEntity<List<Car>> all() {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Car>> all() {
         return ResponseEntity.ok().body( carService.findAll() );
     }
 
     @GetMapping("/cars/{id}")
-    ResponseEntity<Car> retrieve(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Car> retrieve(@PathVariable Long id) {
         Car car = carService.findById(id)
                 .orElseThrow(() -> new CarNotFoundException(id));
 
@@ -36,11 +38,13 @@ public class CarsAPI {
     }
 
     @PostMapping("/cars")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Car> add(@RequestBody Car car) {
         return ResponseEntity.status(HttpStatus.CREATED).body(carService.save(car));
     }
 
     @PutMapping("/cars/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Car> update(@PathVariable Long id, @RequestBody Car car) {
         Car carToUpdate = carService.findById(id)
                 .orElseThrow(() -> new CarNotFoundException(id));
@@ -55,6 +59,7 @@ public class CarsAPI {
     }
 
     @DeleteMapping("/cars/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity remove(@PathVariable Long id) {
         carService.deleteById(id);
         return ResponseEntity.accepted().build();
